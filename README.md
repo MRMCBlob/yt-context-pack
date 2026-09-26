@@ -18,6 +18,7 @@ Build a rich **context pack** for any YouTube video — beyond the transcript. A
 ```
 npx skills add MRMCBlob/yt-context-pack
 ```
+[![skills.sh](https://skills.sh/b/MRMCBlob/yt-context-pack)](https://skills.sh/MRMCBlob/yt-context-pack)
 
 or copy this repo into `~/.claude/skills/yt-context-pack/`.
 
