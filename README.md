@@ -1,17 +1,9 @@
 # yt-context-pack
 
-Build a rich **context pack** for any YouTube video — beyond the transcript. An AI-agent skill: give it a URL, it gathers raw materials and synthesizes structured context optimized for agent consumption.
+AI-agent skills for YouTube. Two skills:
 
-## What a pack contains
-
-- **TL;DR** — what the video argues/shows
-- **Metrics** — views, likes, like ratio, channel subs, views/day
-- **Chapters / structure map** — with timestamps (derived if the video has none)
-- **Visual moments** — keyframes read by the agent, with on-screen text (OCR) and timestamps
-- **Key claims** — quoted, timestamped, with confidence + verify hints
-- **Comment pulse** — consensus, objections, corrections, sponsor detection
-- **Credibility signals** — engagement ratios, flagged tensions
-- **Limitations** — what the pack could NOT capture
+- **`skills/yt-context-pack/`** — rich context pack for any video: metadata, engagement, timestamped Whisper transcript, keyframe visual analysis, chapter map, comment pulse. Beyond the transcript.
+- **`skills/yt-skill-creator/`** — creates a reusable agent skill from one or more YouTube videos: builds context packs, distills the demonstrated procedure, scaffolds a validated SKILL.md.
 
 ## Install
 
@@ -20,39 +12,27 @@ npx skills add MRMCBlob/yt-context-pack
 ```
 [![skills.sh](https://skills.sh/b/MRMCBlob/yt-context-pack)](https://skills.sh/MRMCBlob/yt-context-pack)
 
-or copy this repo into `~/.claude/skills/yt-context-pack/`.
+Or copy any skill folder into `~/.claude/skills/`.
 
-## Requirements
+## yt-context-pack
 
-| Dep | Install | Notes |
-|---|---|---|
-| Python 3.10–3.13 (3.12 recommended) | `winget install Python.Python.3.12` | |
-| faster-whisper 1.2.1 | `pip install faster-whisper==1.2.1` | transcript always via Whisper, no auto-subs |
-| yt-dlp | `pip install -U yt-dlp` | near-weekly releases — keep fresh |
-| ffmpeg | `winget install Gyan.FFmpeg` | keyframe extraction |
+What a pack contains: TL;DR, metrics, chapters/structure with timestamps, visual moments (keyframes + OCR, timestamp-encoded filenames like `kf_04-32.jpg`), key claims (quoted, timestamped, confidence + verify hints), comment pulse (consensus/objections/corrections/sponsors), credibility signals, limitations.
 
-The skill's `doctor` command checks all of these and prints exact fix commands.
+Requirements: Python 3.10–3.13, `pip install faster-whisper==1.2.1 yt-dlp`, ffmpeg (`winget install Gyan.FFmpeg`). The skill's `doctor` command prints exact fix commands.
 
-## How it works
+Run standalone:
 
 ```
-python scripts/build_pack.py "<url>"     # gathers: metadata, download (<=720p),
-                                         # whisper transcript, <=12 keyframes, comments
+python skills/yt-context-pack/scripts/build_pack.py "<url>"
 ```
 
-One script, five cached stages (re-runs skip finished work). Timestamps are encoded
-in keyframe filenames (`kf_04-32.jpg` = 4:32) so the agent can cite visuals without
-opening a manifest. The agent then reads all artifacts and writes
-`<title>.pack.md` + `pack.json` following `references/pack-template.md`.
+Five cached stages — re-runs skip finished work. Env: `YT_PACK_MODEL=base|small|…` (`base` auto-used >45 min), `YT_PACK_DEVICE=cuda`.
 
-Optional env: `YT_PACK_MODEL=base|small|...` (whisper model; `base` is auto-used
-for videos > 45 min), `YT_PACK_DEVICE=cuda`.
+Self-check: `python skills/yt-context-pack/test_build.py`
 
-## Self-check
+## yt-skill-creator
 
-```
-python test_build.py
-```
+Invoke `/yt-skill-creator create a skill from these youtube videos <url1>, <url2>`. It packs each video with yt-context-pack, distills the repeatable procedure (trusting commenter corrections over the video), scaffolds a lean SKILL.md, validates, installs, and iterates.
 
 ## License
 
